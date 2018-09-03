@@ -15,7 +15,7 @@ public class SpelDing extends Applet implements ActionListener{
 
     private int gamestate;
     private int stenen;
-    private String message;
+    private String message="";
 
     public void init(){
         //Maak een paneel aan om de componenten op te zetten
