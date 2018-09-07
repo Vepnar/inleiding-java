@@ -80,16 +80,25 @@ public class SpelDing extends Applet implements ActionListener {
     }
     //Update the gamestate
     public void updateGameState(gamestates gm){
+        //Check if the gamestate should be userturn
         if(gm == gamestates.USERTURN){
+            //Reset the gamestate to 23
             nuts = 23;
+            //Make the textbox visible again
             textbox.setVisible(true);
+            //Change the submit button to submit
             submit.setLabel("Submit");
-        }else{
+        }else{ //If the user lost or won
+            //Change the nuts to zero
             nuts = 0;
+            //Make the textbox invisible
             textbox.setVisible(false);
+            //Change the text of submit to try again
             submit.setLabel("Try again");
         }
+        //Update the gamestate
         state = gm;
+        //Repaint everything
         repaint();
 
     }
@@ -120,9 +129,11 @@ public class SpelDing extends Applet implements ActionListener {
         }
         //Reset the error message
         errorMsg ="";
-
+        //Restart the game
         if (state == gamestates.LOST || state == gamestates.LOST){
+            //Update the gamestate to userturn
             updateGameState(gamestates.USERTURN);
+            //Stop the event
             return;
         }
 
