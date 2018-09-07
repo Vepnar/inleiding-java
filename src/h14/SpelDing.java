@@ -60,7 +60,7 @@ public class SpelDing extends Applet implements ActionListener {
         add(textbox); //Adds the textbox
         add(submit); //Adds the button
     }
-
+    //Magic dont touch
     //Calculate what the computer whats to do
     public int HardcodedAI() {
         //Used to calulate random things with the same seed
@@ -151,7 +151,9 @@ public class SpelDing extends Applet implements ActionListener {
         //Update the panel if it is needed
         repaint();
     }
+    //Draw the nuts on the screen
     public void drawNuts(Graphics g){
+        //
         int counter = 0;
         for(int xn=0;5>xn;xn++){
             for(int yn=0;5>yn;yn++){
