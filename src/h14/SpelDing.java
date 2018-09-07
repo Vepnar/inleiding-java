@@ -153,12 +153,18 @@ public class SpelDing extends Applet implements ActionListener {
     }
     //Draw the nuts on the screen
     public void drawNuts(Graphics g){
-        //
+        //Counter
         int counter = 0;
+        //Loop thru all the items
+        //This one if for the X axis
         for(int xn=0;5>xn;xn++){
+            //This one is for the Y axis
             for(int yn=0;5>yn;yn++){
+                //Stop the loop if the nuts is the same as the counter
                 if(counter == nuts) break;
+                //Draw the image in the image
                 g.drawImage(nutImg, 10+(40*xn), 130+(40*yn), 50, 50, this);
+                //Add one to the counter
                 counter++;
             }
         }
