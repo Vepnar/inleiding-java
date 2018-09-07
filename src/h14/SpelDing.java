@@ -1,129 +1,191 @@
 package h14;
 
-import javax.swing.*;
-import java.awt.*;
+//Import important stuff
 import java.applet.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.net.URL;
 
-public class SpelDing extends Applet implements ActionListener{
-    //zet het aantal stenen voor het begin
-    private int SETTINGSTENEN = 23;
+/* This program needs a resource folder
+    /assets/img/ needs 3 images called lost.png nut.png and win.png
+ */
 
-    private JButton nextbtn;
-    private JPanel jp;
-    private JComboBox<String> sets;
+public class SpelDing extends Applet implements ActionListener {
+    //UI Items for on the applet
+    private TextField textbox;
+    private Button submit;
 
-    private int gamestate;
-    private int stenen;
-    private String message="";
-
-    public void init(){
-        //Maak een paneel aan om de componenten op te zetten
-        jp = new JPanel();
-
-        //Maak ene knop om het spel te spelen
-        nextbtn = new JButton("Next");
-
-        //Maak een optie lijst voor de zetten
-        sets = new JComboBox<>();
-        sets.addItem("1");
-        sets.addItem("2");
-        sets.addItem("3");
-
-        //Voeg een event toe aan de knop
-        nextbtn.addActionListener(this);
-
-        //Voeg de items toe aan het paneel
-        jp.add(sets);
-        jp.add(nextbtn);
-
-        //Voeg het paneel toe aan de applet
-        add(jp);
-
-        //Set variable voor het spel
-        stenen = SETTINGSTENEN;
-        gamestate = 0;
+    //Store data about the current game
+    private enum gamestates {
+            USERTURN,LOST,WIN
     }
-    //Voor het tekenen van de dingen op de applet
-    public void paint(Graphics g){
-        //Maak alle knoppen zichtbaar
-        jp.updateUI();
-        //Laat de hoeveelheid stenen zien
-        g.drawString("Er zijn " + stenen + " stenen!",100,80);
-        //Maak extra informatie zichtbaar
-        g.drawString(message,100,100);
-    }
-    //Bereken de zetten van de computer
-    public int hardcodedAI(){
-        int target = (int)stenen/4;
-        target = (target*4)+1;
+    private gamestates state = gamestates.USERTURN;
+    private Integer nuts = 23;
 
-        int calc =  Math.abs(stenen-target);
-        //Als de computer geen zetten doet veranderd dit het naar 1
-        if(calc == 0){
-            calc+=1;
+    //Messages
+    private String errorMsg = "";
+    private String aiMsg = "";
+
+    //Images
+    private Image winImg;
+    private Image lostImg;
+    private Image nutImg;
+
+
+    //Path to resources
+    private URL imgPath;
+
+    public void init() {
+
+        //Applet size
+        setSize(420, 420);
+
+        //Create UI items
+        //textbox is used to get information from the user
+        textbox = new TextField("", 0);
+        //Create a button to submit data from the textbox
+        submit = new Button("Submit");
+        //Add a click event to the button
+        submit.addActionListener(this);
+
+        //Get the resource paths
+        imgPath = SpelDing.class.getResource("/assets/img/");
+
+        //Load images
+        winImg = getImage(imgPath, "win.png");
+        lostImg = getImage(imgPath, "lost.png");
+        nutImg = getImage(imgPath, "nut.png");
+        //Add UI Items to the applet's panel
+        add(textbox); //Adds the textbox
+        add(submit); //Adds the button
+    }
+
+    //Calculate what the computer whats to do
+    public int HardcodedAI() {
+        //Used to calulate random things with the same seed
+        Random r = new Random();
+        //Calculate to the goals
+        int x = nuts % 4;
+        //Generate a random output
+        int out = r.nextInt(3)+1;
+        //Check if the number has to change
+        if(x>1){
+            //Update the output
+            out=x-1;
         }
-        //Geeft de zet terug aan het spel
-        return calc;
-    }
+        //Return it here
+        return out;
 
-    //Voor als de speler wint/verliest
-    public void change(String msg){
-        //Verander de tekst van de knop
-        nextbtn.setText("Restart");
-        gamestate = 1;
-        //Maakt van de stenen 0 voor als het een negatief getal is
-        stenen = 0;
-        //Maak het bericht anders
-        message=msg;
-        //Update de UI
-        repaint();
     }
-    //Reset het spel
-    public void restart(){
-        //Verander te text van de knop
-        nextbtn.setText("Next");
-        //Maak de hoveelheid stenen maximaal
-        stenen=SETTINGSTENEN;
-        //update de gamestate naar spelen
-        gamestate=0;
-        //Update de UI
+    //Update the gamestate
+    public void updateGameState(gamestates gm){
+        if(gm == gamestates.USERTURN){
+            nuts = 23;
+            textbox.setVisible(true);
+            submit.setLabel("Submit");
+        }else{
+            nuts = 0;
+            textbox.setVisible(false);
+            submit.setLabel("Try again");
+        }
+        state = gm;
         repaint();
+
     }
-    //Event voor als je op de knop klikt
+    //This is an event for if an UI item is pressed
+    //Its currently connected to a button
     @Override
     public void actionPerformed(ActionEvent e) {
-        //Gamestate 0 = spelen
-        //Gamestate 1 = gewonnen/verloren
-        if (gamestate == 0) {
-            //Krijg het geselecteerde item als string
-            String selectedstr = (String) sets.getSelectedItem();
-            //Zet de string om in int
-            int selected = Integer.parseInt(selectedstr);
-            //Kijk of de zet meer is dan het aantal stenen zo ja dan heb je verloren
-             if(selected >= stenen) {
-                 change("Je hebt verloren");
-             }else{
-                 //Haal de stenen er af
-                 stenen-= selected;
-                 //Laat de hardcoded AI berekenen wat het wilt doen
-                 int ai = hardcodedAI();
-                 //Haal de stenen van de AI er van af
-                 stenen-=ai;
-                 //Verander de message naar  de zet van de computer
-                 message = "De zet van de computer = "+ai;
-                 //Kijk of de stenen 0 of minder zijn
-                 if(1> stenen){
-                     //Verander dat je gwonnen heb
-                     change("Je hebt gewonnen!");
-                 }
-             }
-        }else{
-            //Als de gamestate niet 0 is en er word op de knop geklikt restart het spel dan
-            restart();
+        //Get the text from the textbox
+        String number = textbox.getText();
+
+        //Check if the message in the textbox is a number
+        int selected;
+        //This will make so it wont crash
+        try {
+
+            //try to converted the string to a number
+            selected= Integer.parseInt(number);
+
+        } catch (Exception ex) {
+            //Set an error message for the problem
+            errorMsg= number + " is not a number";
+            //repaint the panel
+            repaint();
+            //Stop the event
+            return;
+
+
         }
-        //Update de UI en de messages
+        //Reset the error message
+        errorMsg ="";
+
+        if (state == gamestates.LOST || state == gamestates.LOST){
+            updateGameState(gamestates.USERTURN);
+            return;
+        }
+
+            //Check if teh number is between 0-4
+        if (selected > 0 &&selected < 4) {
+
+            //take the amount of nuts selected
+            nuts-= selected;
+            //Check if you lost
+            if (nuts < 1) {
+                //Update the gamestate to lost
+                updateGameState(gamestates.LOST);
+                return;
+            }
+            //Calculate for the computer
+            int selectedpc = HardcodedAI();
+            //Take the amount of nuts selected by the computer
+            nuts-=selectedpc;
+            //Check if the computer lost
+            if(nuts < 1){
+                //Update the gamestate to win
+                updateGameState(gamestates.WIN);
+                return;
+            }
+            }
+        //Update the panel if it is needed
         repaint();
     }
-}
+    public void drawNuts(Graphics g){
+        int counter = 0;
+        for(int xn=0;5>xn;xn++){
+            for(int yn=0;5>yn;yn++){
+                if(counter == nuts) break;
+                g.drawImage(nutImg, 10+(40*xn), 130+(40*yn), 50, 50, this);
+                counter++;
+            }
+        }
+    }
 
+    //This paints the important things on the screen
+    public void paint(Graphics g) {
+        //Draw the error message in the applet
+        g.drawString(errorMsg,20,50);
+        //Draw the turn of the ai on the applet
+        g.drawString(aiMsg,20,70);
+        //Draw the current state message
+        if(state == gamestates.USERTURN) {
+            g.drawString("it's your turn!",20,90);
+            drawNuts(g);
+        }else if(state == gamestates.LOST){
+            g.drawString("You lost",20,90);
+            g.drawImage(lostImg,10,130,250,250,this);
+        }else { //I dont need to add this because you cant win
+            g.drawString("You won!", 20, 90);
+            g.drawImage(winImg, 10, 130, 250, 250, this);
+        }
+
+        //Show the amount of nuts you got so you dont have to count them
+        g.drawString("There are  "+nuts+ " nuts", 20, 110);
+        //Explain what you should enter
+        g.drawString("You can only get 3 of them at the time", 20, 130);
+
+
+    }
+
+}
